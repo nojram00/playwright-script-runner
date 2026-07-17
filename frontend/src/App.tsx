@@ -34,6 +34,20 @@ function App() {
     await sendScript(code)
   }
 
+  const handleCodeSave = () => {
+    if (code.trim() === defaultScript.trim()) return;
+    const a = document.createElement('a');
+    const file = new Blob(
+      [code], {
+            type: "application/javascript"
+        })
+    const new_url = URL.createObjectURL(file)
+    a.href = new_url
+    a.download = `snippet-${new Date().toISOString().replace(/[:.]/g, "-")}.js`
+    a.click()
+    URL.revokeObjectURL(new_url)
+  }
+
   const handleClear = () => {
     setCode(defaultScript)
     clearDefault()
@@ -94,6 +108,16 @@ function App() {
                 Download Result
               </Button>
               )}
+
+              <Button
+                onClick={handleCodeSave}
+                variant="outline"
+                size="lg"
+                disabled={isLoading}
+                className="flex-1"
+              >
+                Download Code Snippet
+              </Button>
             </div>
           </div>
 
