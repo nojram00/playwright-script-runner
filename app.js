@@ -3,6 +3,8 @@ import { executeScript } from "./core/script_runner.js";
 import express from "express"
 import path from "node:path"
 import cors from "cors"
+import { SSEMiddleware } from "./core/sse_middleware.js";
+import logEmitter from "./core/event_pubsub.js";
 
 const app = express()
 
@@ -46,6 +48,24 @@ app.post('/test', async (req, res) => {
         });
     }
 });
+
+app.get('/log', SSEMiddleware(), (req, res) => {
+    logEmitter.on('log', (message) => {
+        res.sendSSE(message)
+    });
+
+    logEmitter.on('error', message => {
+        res.sendSSE({
+            error: message
+        })
+    });
+
+    logEmitter.on('info', message => {
+        res.sendSSE({
+            info: message
+        })
+    })
+})
 
 app.listen(8089, () => { 
     console.log(dist)
