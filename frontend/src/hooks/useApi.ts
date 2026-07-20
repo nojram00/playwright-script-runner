@@ -1,7 +1,8 @@
 import { useState } from "react";
+import useURL from "./useUrl";
 
 export default function useApi() {
-    const url = import.meta.env['DEV'] ? 'http://127.0.0.1:8089' : window.location.origin;
+    const { url } = useURL()
     
     const [isLoading, setIsLoading] = useState(false)
     const [result, setResult] = useState<any>(null)
@@ -10,7 +11,9 @@ export default function useApi() {
     const sendScript = async (script : string) => {
         
         try {
+            setResult(null);
             setIsLoading(true);
+            setError(null);
             const response = await fetch(`${url}/test`, {
                 headers : {
                     "Content-Type" : "application/javascript"
@@ -53,10 +56,16 @@ export default function useApi() {
         setError(null)
     }
 
+    const onLog = (callback : (message : any) => void) => {
+        const eventSource = new EventSource(`${url}/log`);
+        eventSource.onmessage = callback;
+    }
+
     return {
         sendScript,
         clearDefault,
         downloadResult,
+        onLog,
         isLoading,
         result,
         error

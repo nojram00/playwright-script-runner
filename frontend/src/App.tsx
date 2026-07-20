@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { CodeEditor } from './components/CodeEditor'
 import { Button } from './components/Button'
+import { OutputDisplay } from './components/OutputDisplay'
 import './App.css'
 import useApi from './hooks/useApi'
+import Console from './components/Console'
 
 const defaultScript = `
 /**
@@ -97,18 +99,6 @@ function App() {
               >
                 Clear
               </Button>
-              {result && (
-              <Button
-                onClick={downloadResult}
-                variant="outline"
-                size="lg"
-                disabled={isLoading}
-                className="flex-1"
-              >
-                Download Result
-              </Button>
-              )}
-
               <Button
                 onClick={handleCodeSave}
                 variant="outline"
@@ -122,45 +112,15 @@ function App() {
           </div>
 
           {/* Results Section */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white mb-3">Output</h2>
+          <OutputDisplay
+            result={result}
+            error={error}
+            isLoading={isLoading}
+            onDownload={downloadResult}
+          />
 
-            {/* Error Display */}
-            {error && (
-              <div className="bg-red-900/20 border border-red-500 rounded-lg p-4">
-                <h3 className="text-red-400 font-semibold mb-2">Error</h3>
-                <p className="text-red-300 text-sm break-words">{error}</p>
-              </div>
-            )}
-
-            {/* Result Display */}
-            {result && (
-              <div className="bg-green-900/20 border border-green-500 rounded-lg p-4">
-                <h3 className="text-green-400 font-semibold mb-2">Success</h3>
-                <pre className="text-green-300 text-xs overflow-auto bg-black/30 p-3 rounded">
-                  {JSON.stringify(result, null, 2)}
-                </pre>
-              </div>
-            )}
-
-            {/* Loading State */}
-            {isLoading && (
-              <div className="bg-blue-900/20 border border-blue-500 rounded-lg p-4 animate-pulse">
-                <h3 className="text-blue-400 font-semibold">Executing...</h3>
-                <p className="text-blue-300 text-sm">Please wait while the script runs</p>
-              </div>
-            )}
-
-            {/* Info Box */}
-            {!result && !error && !isLoading && (
-              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                <h3 className="text-gray-300 font-semibold mb-2">Info</h3>
-                <p className="text-gray-400 text-sm">
-                  Execute your Playwright script to see the results here
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Console */}
+          <Console />
         </div>
       </div>
     </div>
