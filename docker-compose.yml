@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    image: playwright-web-runner
+    ports:
+      - "8089:8089"
