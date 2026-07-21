@@ -1,23 +1,13 @@
 import vm from 'node:vm'
 import { ensureBrowser } from './browser.js';
-import logEmitter from './event_pubsub.js';
+import vmconsole from './vmconsole.js';
 
 const HELPERS = {
     url_create : (url_str) => new URL(url_str),
     
 }
 
-const console = {
-    log: (...message) => { 
-        logEmitter.emit("log", message.join(''));
-    },
-    error: (...message) => {
-        logEmitter.emit("error", message.join(""));
-    },
-    info: (...message) => {
-        logEmitter.emit("info", message.join(""));
-    }
-}
+const console = vmconsole;
 
 async function executeScript(script) {
     let browser = null;

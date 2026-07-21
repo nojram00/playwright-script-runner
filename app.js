@@ -4,7 +4,7 @@ import express from "express"
 import path from "node:path"
 import cors from "cors"
 import { SSEMiddleware } from "./core/sse_middleware.js";
-import logEmitter from "./core/event_pubsub.js";
+import vmconsole from "./core/vmconsole.js";
 
 const app = express()
 
@@ -50,17 +50,17 @@ app.post('/test', async (req, res) => {
 });
 
 app.get('/log', SSEMiddleware(), (req, res) => {
-    logEmitter.on('log', (message) => {
+    vmconsole.on('log', (message) => {
         res.sendSSE(message)
     });
 
-    logEmitter.on('error', message => {
+    vmconsole.on('error', message => {
         res.sendSSE({
             error: message
         })
     });
 
-    logEmitter.on('info', message => {
+    vmconsole.on('info', message => {
         res.sendSSE({
             info: message
         })
