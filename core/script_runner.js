@@ -7,8 +7,6 @@ const HELPERS = {
     
 }
 
-const console = vmconsole;
-
 async function executeScript(script) {
     let browser = null;
     let close = null;
@@ -18,7 +16,7 @@ async function executeScript(script) {
         browser = browserObj.browser;
         close = browserObj.close;
         
-        const vmContext = { browser, close, HELPERS, console };
+        const vmContext = { browser, close, HELPERS, console: vmconsole };
         vm.createContext(vmContext);
 
         const result = await vm.runInContext(script, vmContext);
