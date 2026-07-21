@@ -1,0 +1,1 @@
+docker-compose down && docker-compose up --build -d 2>&1 | tee docker-output.log
