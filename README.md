@@ -35,6 +35,65 @@ npm run dev # if you want in dev mode.
 
 ---
 
+## Docker Installation
+
+### Using Docker
+
+Pull and run the Docker image from Docker Hub:
+
+```bash
+docker run -p 8089:8089 nojram/web-script-runner:latest
+```
+
+Then navigate to `localhost:8089` to begin executing test scripts.
+
+**Available tags:**
+- `latest` - Latest stable version
+- `dev` - Development version (if available)
+
+### Using Docker Compose
+
+Create a `docker-compose.yml` file in your project directory:
+
+```yaml
+version: '3.8'
+
+services:
+  web-script-runner:
+    image: nojram/web-script-runner:latest
+    ports:
+      - "8089:8089"
+    environment:
+      - NODE_ENV=production
+    # Optional: uncomment for dev mode
+    # environment:
+    #   - NODE_ENV=development
+```
+
+Start the service:
+
+```bash
+docker-compose up -d
+```
+
+View logs:
+
+```bash
+docker-compose logs -f web-script-runner
+```
+
+Stop the service:
+
+```bash
+docker-compose down
+```
+
+Once running, navigate to `localhost:8089` to begin executing test scripts.
+
+**Docker Hub Repository:** https://hub.docker.com/repository/docker/nojram/web-script-runner/general
+
+---
+
 ## Script Template
 - Executed scripts requires to run in an IFEE with a return value in order to send a result as response.
 
