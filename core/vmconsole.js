@@ -11,6 +11,11 @@ class VMConsole extends EventEmitter {
         this.emit('info', args.join(''));
     }
 
+    warn(...args) {
+        console.warn(...args);
+        this.emit('warn', args.join(''));
+    }
+
     error(...args) {
         console.error(...args);
         this.emit('error', args.join(''))

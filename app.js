@@ -60,6 +60,12 @@ app.get('/log', SSEMiddleware(), (req, res) => {
         })
     });
 
+    vmconsole.on('warn', message => {
+        res.sendSSE({
+            warning: message
+        })
+    })
+
     vmconsole.on('info', message => {
         res.sendSSE({
             info: message
