@@ -50,26 +50,64 @@ app.post('/test', async (req, res) => {
 });
 
 app.get('/log', SSEMiddleware(), (req, res) => {
-    vmconsole.on('log', (message) => {
-        res.sendSSE(message)
-    });
 
-    vmconsole.on('error', message => {
+    const INACTIVITY_LIMIT = 30000;
+    let inactivityTimer = null;
+
+    const cleanup = () => {
+        if (inactivityTimer) clearTimeout(inactivityTimer);
+
+        vmconsole.removeListener('log', handelLog);
+        vmconsole.removeListener('error', handleError);
+        vmconsole.removeListener('warn', handleWarning);
+        vmconsole.removeListener('info', handleInfo);
+    }
+
+    const resetInactivityTimer = () => {
+        if (inactivityTimer) clearTimeout(inactivityTimer);
+
+        inactivityTimer = setTimeout(() => {
+            res.sendSSE({
+                event: "close",
+                reason: "Inactivity timeout"
+            });
+
+            cleanup();
+            res.end();
+        }, INACTIVITY_LIMIT)
+    }
+
+    const handelLog = (message) => {
+        res.sendSSE(message)
+    };
+
+    const handleError = (message) => {
         res.sendSSE({
             error: message
         })
-    });
+    };
 
-    vmconsole.on('warn', message => {
+    const handleWarning = (message) => {
         res.sendSSE({
             warning: message
         })
-    })
+    }
 
-    vmconsole.on('info', message => {
+    const handleInfo = (message) => {
         res.sendSSE({
             info: message
         })
+    }
+
+    vmconsole.on('log', handelLog);
+    vmconsole.on('error', handleError);
+    vmconsole.on('warn', handleWarning);
+    vmconsole.on('info', handleInfo);
+
+    resetInactivityTimer();
+
+    req.on('close', () => {
+        cleanup();
     })
 })
 
